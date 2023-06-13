@@ -1,12 +1,12 @@
 #In this SQL, I'm querying a database with multiple tables in it to quantify statistics about customer and order data.
 
 # 1. How many orders were placed in January?
-SELECT COUNT(orderID) as Quantity
+SELECT COUNT(orderID) as Count
 FROM BIT_DB.JanSales 
 WHERE LENGTH(orderID)=6;
 
 #2. How many of those orders were for an iPhone?
-SELECT COUNT(*) as Quantity
+SELECT COUNT(*) as Count
 FROM BIT_DB.JanSales 
 WHERE LENGTH(orderID)=6
 AND Product LIKE "%iPhone%";
@@ -38,19 +38,19 @@ GROUP BY product;
 
 
 6. Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
-SELECT Product as Product, SUM(quantity) as Quantity, SUM(quantity) * price as Revenue FROM BIT_DB.FebSales
+SELECT Product as Product, SUM(quantity) as Count, SUM(quantity) * price as Revenue FROM BIT_DB.FebSales
 WHERE LENGTH(orderID)=6
 AND location = "548 Lincoln St, Seattle, WA 98101";
 
 7. How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
-SELECT count(DISTINCT c.acctnum) as Quantity, ROUND(AVG(quantity*price),2) as AvgSpent from BIT_DB.FebSales as f
+SELECT count(DISTINCT c.acctnum) as Count, ROUND(AVG(quantity*price),2) as AvgSpent from BIT_DB.FebSales as f
 JOIN BIT_DB.customers as c
 ON c.order_id = f.orderID
 WHERE quantity > 2
 AND LENGTH(orderID)=6;
 
 8. List all the products sold in Los Angeles in February, and include how many of each were sold
-SELECT product as Product, sum(quantity) as Quantity, location as Location
+SELECT product as Product, sum(quantity) as Count, location as Location
 FROM BIT_DB.FebSales
 WHERE LENGTH(orderID)=6
 AND location LIKE "%Los Angeles%"
