@@ -36,7 +36,6 @@ FROM BIT_DB.JanSales
 WHERE LENGTH(orderID)=6
 GROUP BY product;
 
-
 6. Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
 SELECT Product as Product, SUM(quantity) as Count, SUM(quantity) * price as Revenue FROM BIT_DB.FebSales
 WHERE LENGTH(orderID)=6
@@ -64,10 +63,34 @@ AND location LIKE "%New York%"
 GROUP BY Location
 HAVING Count(Location) > 2;
 
-
 10. How many of each type of headphone were sold in February?
 SELECT Product as Product, SUM(Quantity) as Quantity
 FROM BIT_DB.FebSales
 WHERE Product LIKE "%Headphones%"
 AND LENGTH(orderID)=6
 GROUP BY Product;
+
+11. What was the average amount spent per account in February? 
+SELECT ROUND(SUM(quantity*price)/ COUNT(distinct acctnum),2) as AVG_per_Account
+FROM BIT_DB.FebSales
+JOIN BIT_DB.customers
+on BIT_DB.FebSales.orderID = BIT_DB.customers.order_id
+WHERE LENGTH(orderID)=6;
+
+12. What was the average quantity of products purchased per account in February?
+SELECT SUM(quantity), COUNT(distinct acctnum), SUM(quantity)/COUNT(distinct acctnum)
+FROM BIT_DB.FebSales
+JOIN BIT_DB.customers
+on BIT_DB.FebSales.orderID = BIT_DB.customers.order_id
+WHERE LENGTH(orderID)=6;
+
+13. Which product brought in the most revenue in January and how much revenue did it bring in total?
+SELECT product, ROUND(SUM(quantity * price),2) as Revenue
+FROM BIT_DB.JanSales
+WHERE LENGTH(orderID) = 6
+GROUP BY product
+ORDER BY ROUND(SUM(quantity) * price,2) desc
+LIMIT 1;
+
+
+
