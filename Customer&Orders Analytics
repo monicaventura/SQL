@@ -9,7 +9,7 @@ WHERE LENGTH(orderID)=6;
 SELECT COUNT(*) as Count
 FROM BIT_DB.JanSales 
 WHERE LENGTH(orderID)=6
-AND Product LIKE "%iPhone%";
+AND Product LIKE '%iPhone%';
 
 3. Select the customer account numbers for all the orders that were placed in February.
 SELECT DISTINCT acctnum as CustomerAccounts
@@ -39,7 +39,7 @@ GROUP BY product;
 6. Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
 SELECT Product as Product, SUM(quantity) as Count, SUM(quantity) * price as Revenue FROM BIT_DB.FebSales
 WHERE LENGTH(orderID)=6
-AND location = "548 Lincoln St, Seattle, WA 98101";
+AND location = '548 Lincoln St, Seattle, WA 9810';
 
 7. How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?
 SELECT count(DISTINCT c.acctnum) as Count, ROUND(AVG(quantity*price),2) as AvgSpent from BIT_DB.FebSales as f
@@ -52,21 +52,21 @@ AND LENGTH(orderID)=6;
 SELECT product as Product, sum(quantity) as Count, location as Location
 FROM BIT_DB.FebSales
 WHERE LENGTH(orderID)=6
-AND location LIKE "%Los Angeles%"
+AND location LIKE '%Los Angeles%'
 GROUP BY product;
 
 9. Which locations in New York received at least 3 orders in January, and how many orders did they each receive?
 SELECT Location as Location, Count(Location) as Count
 FROM BIT_DB.JanSales
 WHERE LENGTH(orderID)=6
-AND location LIKE "%New York%"
+AND location LIKE '%New York%'
 GROUP BY Location
 HAVING Count(Location) > 2;
 
 10. How many of each type of headphone were sold in February?
 SELECT Product as Product, SUM(Quantity) as Quantity
 FROM BIT_DB.FebSales
-WHERE Product LIKE "%Headphones%"
+WHERE Product LIKE '%Headphones%'
 AND LENGTH(orderID)=6
 GROUP BY Product;
 
