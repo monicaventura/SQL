@@ -1,0 +1,115 @@
+--#In this SQL code, I'm querying a database that's holding purchase information to answer questions about the data.
+
+--1. Show Customers (their full names, customer ID, and country) who are not in the US.
+SELECT FirstName|| ' '||LastName as Customer, CustomerId as ID, Country
+FROM customers
+WHERE Country<>'USA';
+
+--2. Show only the Customers from Brazil
+SELECT FirstName|| ' '||LastName as Customer
+FROM customers
+WHERE Country='Brazil';
+
+--3. Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country
+SELECT FirstName||' '||LastName as Customer, invoiceID as InvoiceId, InvoiceDate, BillingCountry
+FROM invoices AS i
+INNER JOIN customers AS c
+ON i.CustomerID = c.customerID
+WHERE Country='Brazil';
+
+--4. Show the Employees who work on Sales
+SELECT FirstName||' '||LastName as Employee, EmployeeId, Title AS JobTitle
+FROM employees
+WHERE Title LIKE '%Sales%';
+
+--5. Find a unique/distinct list of billing countries from the Invoice table.
+SELECT DISTINCT BillingCountry
+FROM invoices
+ORDER BY BillingCountry;
+
+--6. Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+SELECT e.FirstName||' '||e.LastName as SalesAgent, i.invoiceId AS InvoiceId
+FROM invoices AS i
+INNER JOIN customers AS c
+ON i.customerId = c.customerId
+INNER JOIN employees AS e
+ON c.supportRepId = e.employeeId;
+
+OR 
+
+WITH SalesInvoices AS(
+SELECT c.supportRepId as employeeId, i.invoiceId
+FROM invoices AS i
+INNER JOIN customers as c
+WHERE i.customerId = c.customerId
+)
+
+SELECT FirstName||' '||LastName as SalesAgent, invoiceId AS InvoiceId
+FROM employees AS e
+INNER JOIN SalesInvoices AS s
+ON e.employeeId = s.employeeId;
+
+--7. Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+SELECT i.invoiceId AS InvoiceId, i.total AS Total, c.FirstName||' '||c.LastName as Customer, e.FirstName||' '||e.LastName as SalesAgent
+FROM invoices AS i
+INNER JOIN customers AS c
+ON i.customerId = c.customerId
+INNER JOIN employees AS e
+ON c.supportRepId = e.employeeId;
+
+--8. How many Invoices were there in 2009?
+SELECT COUNT(invoiceId) AS Quantity
+FROM invoices
+WHERE invoiceDate LIKE '2009%';
+
+--9. What are the total sales for 2009?
+SELECT ROUND(SUM(total),2) AS TotalSales
+FROM invoices
+WHERE invoiceDate LIKE '2009%';
+
+--10. Write a query that includes the purchased track name with each invoice line ID.
+SELECT t.Name AS Track, i.invoiceId AS InvoiceId
+FROM invoice_items AS i
+JOIN tracks AS t
+on i.trackId = t.trackId;
+
+--11. Write a query that includes the purchased track name AND artist name with each invoice line ID.
+SELECT t.Name AS Track, ar.Name AS Artist, i.invoiceId AS InvoiceId
+FROM invoice_items AS i
+JOIN tracks AS t
+ON i.trackId = t.trackId
+JOIN albums AS a
+ON t.albumId = a.albumId
+JOIN artists AS ar
+ON a.artistId = ar.artistId;
+
+--12. Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT Name AS Track, a.title AS Album, mt.name AS MediaType, g.Name AS Genre
+FROM tracks AS t
+JOIN albums AS a
+ON t.albumId = a.albumId
+JOIN media_types as mt
+ON mt.mediaTypeId = t.mediaTypeId
+JOIN genres AS g
+ON g.genreId = t.genreId;
+
+--13. Show the total sales made by each sales agent.
+SELECT e.firstName || e.lastName AS SalesAgent, ROUND(SUM(TOTAL),2) AS Total
+FROM invoices AS i
+JOIN customers AS c
+ON i.customerId = c.customerId
+JOIN employees AS e
+ON c.supportRepId = e.employeeId
+GROUP BY e.employeeId;
+
+--14. Which sales agent made the most dollars in sales in 2009?
+SELECT e.firstName || e.lastName AS SalesAgent, ROUND(SUM(TOTAL),2) AS Total
+FROM invoices AS i
+JOIN customers AS c
+ON i.customerId = c.customerId
+JOIN employees AS e
+ON c.supportRepId = e.employeeId
+WHERE invoiceDate LIKE '%2009%'
+GROUP BY e.employeeId
+ORDER BY SUM(TOTAL) DESC
+LIMIT 1;
